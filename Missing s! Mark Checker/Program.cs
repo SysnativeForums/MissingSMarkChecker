@@ -20,7 +20,7 @@ try
         return;
     }
 
-    deployments = HiveLoader.HKLM.OpenSubKey($@"{hive_name}\CanonicalData\Deployments");
+    deployments = HiveLoader.HKLM.OpenSubKey($@"{hive_name}\CanonicalData\Deployments", true);
 
     foreach (string deployment_name in deployments.GetSubKeyNames())
     {
