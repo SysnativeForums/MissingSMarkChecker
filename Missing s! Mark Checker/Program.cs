@@ -20,6 +20,8 @@ try
         return;
     }
 
+    Console.WriteLine("Reading Deployments subkey, please wait...");
+
     deployments = HiveLoader.HKLM.OpenSubKey($@"{hive_name}\CanonicalData\Deployments", true);
 
     foreach (string deployment_name in deployments.GetSubKeyNames())
@@ -43,6 +45,8 @@ try
 
         deployment.Close();
     }
+
+    Console.WriteLine("The repair(s) - if any - have been completed...");
 }
 catch (Exception e)
 {
@@ -53,8 +57,10 @@ finally
     HiveLoader.GrantPrivileges();
     
     if (deployments is not null) deployments.Close();
-    HiveLoader.UnloadHive(hive_name);
+    int result = HiveLoader.UnloadHive(hive_name);
     HiveLoader.HKLM.Close();
 
     HiveLoader.RevokePrivileges();
+
+    if (result == 0) Console.WriteLine("Successfully unloaded hive");
 }
