@@ -40,6 +40,8 @@ try
                 deployment.SetValue(s_mark, value, data_type);
             }
         }
+
+        deployment.Close();
     }
 }
 catch (Exception e)
@@ -49,8 +51,10 @@ catch (Exception e)
 finally
 {
     HiveLoader.GrantPrivileges();
-    deployments.Close();
-    HiveLoader.HKLM.Close();
+    
+    if (deployments is not null) deployments.Close();
     HiveLoader.UnloadHive(hive_name);
+    HiveLoader.HKLM.Close();
+
     HiveLoader.RevokePrivileges();
 }

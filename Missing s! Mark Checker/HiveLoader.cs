@@ -40,7 +40,8 @@ namespace Missing_s__Mark_Checker
 
         public static int UnloadHive(string name)
         {
-            return RegUnLoadKey(HKLM.Handle.DangerousGetHandle(), name);
+            int result = RegUnLoadKey(HKLM.Handle.DangerousGetHandle(), name);
+            return result;
         }
 
         public static void GrantPrivileges()
