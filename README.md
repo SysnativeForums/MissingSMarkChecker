@@ -4,10 +4,10 @@ s!-p! mark pairs, then the tool will add the missing s! marks and safely unload 
 
 Instructions:
 
-The application does not support command-line arguments at the moment so you will need to start the .exe first and then enter the following:
+There is two methods for using the tool:
 
-1. The name of the COMPONENTS hive alias - please **do not** use COMPONENTS as the alias.
-2. The path of the COMPONENTS hive you wish to repair, you can use the Copy as Path option from the Windows right-click context menu to get this. You do not need to remove the double quotes.
+1. Drag and drop the COMPONENTS hive onto the .exe file, it will prompt you for an alias for the hive to be loaded
+2. Load the .exe file and then enter the alias and path manually, you can use the Copy as Path option from the Windows right-click context menu to get this. You do not need to remove the double quotes.
 
 Important Points:
 
