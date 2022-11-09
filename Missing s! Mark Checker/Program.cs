@@ -1,10 +1,22 @@
 ﻿using Microsoft.Win32;
 using Missing_s__Mark_Checker;
 
+string[] arguments = Environment.GetCommandLineArgs();
+string path = string.Empty;
+
 Console.Write("Enter the name to load COMPONENTS hive as: ");
 string hive_name = Console.ReadLine();
-Console.Write("Enter the path of the COMPONENTS hive to load: ");
-string path = Console.ReadLine();
+
+if (arguments.Length < 2)
+{
+    Console.Write("Enter the path of the COMPONENTS hive to load: ");
+    path = Console.ReadLine();
+}
+else
+{
+    //Grab the path from the dropped file
+    path = arguments[1];
+}
 
 RegistryKey deployments = null;
 
@@ -63,4 +75,7 @@ finally
     HiveLoader.RevokePrivileges();
 
     if (result == 0) Console.WriteLine("Successfully unloaded hive");
+
+    Console.WriteLine("Please press any key to exit...");
+    Console.ReadKey();
 }
