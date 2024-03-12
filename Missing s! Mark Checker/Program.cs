@@ -1,29 +1,17 @@
 ﻿using Microsoft.Win32;
 using Missing_s__Mark_Checker;
 
-string[] arguments = Environment.GetCommandLineArgs();
-string path = string.Empty;
+const string hive = "C";
 
-Console.Write("Enter the name to load COMPONENTS hive as: ");
-string hive_name = Console.ReadLine();
+var arguments = Environment.GetCommandLineArgs();
+var path = arguments[1];
 
-if (arguments.Length < 2)
-{
-    Console.Write("Enter the path of the COMPONENTS hive to load: ");
-    path = Console.ReadLine();
-}
-else
-{
-    //Grab the path from the dropped file
-    path = arguments[1];
-}
-
-RegistryKey deployments = null;
+RegistryKey deployments = default!;
 
 try
 {
     HiveLoader.GrantPrivileges();
-    int result = HiveLoader.LoadHive(path, hive_name);
+    var result = HiveLoader.LoadHive(path, hive);
     HiveLoader.RevokePrivileges();
 
     if (result != 0)
@@ -34,24 +22,26 @@ try
 
     Console.WriteLine("Reading Deployments subkey, please wait...");
 
-    deployments = HiveLoader.HKLM.OpenSubKey($@"{hive_name}\CanonicalData\Deployments", true);
+    deployments = HiveLoader.HKLM.OpenSubKey($@"{hive}\CanonicalData\Deployments", true)!;
 
-    foreach (string deployment_name in deployments.GetSubKeyNames())
+    foreach (var deploymentName in deployments!.GetSubKeyNames())
     {
-        RegistryKey deployment = deployments.OpenSubKey(deployment_name, true);
+        var deployment = deployments.OpenSubKey(deploymentName, true)!;
+        
+        var values = deployment.GetValueNames();
 
-        int smark_count = deployment.GetValueNames().Where(v => v.StartsWith("s!")).Count();
-        int pmark_count = deployment.GetValueNames().Where(v => v.StartsWith("p!")).Count();
+        var sMarks = values.Where(v => v.StartsWith("s!"));
+        var pMarks = values.Where(v => v.StartsWith("p!"));
 
-        if (pmark_count > smark_count)
+        if (pMarks.Count() > sMarks.Count())
         {
-            foreach (string p_mark in deployment.GetValueNames().Where(v => v.StartsWith("p!")))
+            foreach (var pMark in pMarks)
             {
-                object value = deployment.GetValue(p_mark);
-                RegistryValueKind data_type = deployment.GetValueKind(p_mark);
-                string s_mark = p_mark.Replace("p!", "s!");
+                var value = deployment.GetValue(pMark)!;
+                var dataType = deployment.GetValueKind(pMark);
+                var sMark = pMark.Replace("p!", "s!");
 
-                deployment.SetValue(s_mark, value, data_type);
+                deployment.SetValue(sMark, value, dataType);
             }
         }
 
@@ -69,7 +59,7 @@ finally
     HiveLoader.GrantPrivileges();
     
     if (deployments is not null) deployments.Close();
-    int result = HiveLoader.UnloadHive(hive_name);
+    var result = HiveLoader.UnloadHive(hive);
     HiveLoader.HKLM.Close();
 
     HiveLoader.RevokePrivileges();
